@@ -1,5 +1,5 @@
 # Process_Improvement
-This is a personal project to help simulate and improve any inefficiencies during any type of process.
+This is a personal project to help simulate and improve inefficiency in a bottle manufacturing company.
 
 Goal:
 The main goal is to simulate different processes and find and fix waste and inefficiencies within the process.
