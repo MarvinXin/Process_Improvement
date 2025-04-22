@@ -34,3 +34,8 @@ DefectRates = {
 #Tracker for production output
 total_production = 0
 total_defects = 0
+
+
+# Processing Units
+def process_units(env, unit_id, machine, output_tracker):
+    global total_defects, total_production
