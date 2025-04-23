@@ -31,11 +31,19 @@ DefectRates = {
     "Packaging": 0.005
 }
 
-#Tracker for production output
-total_production = 0
-total_defects = 0
 
 
-# Processing Units
+# Processing Units functions
 def process_units(env, unit_id, machine, output_tracker):
     global total_defects, total_production
+
+    for step, cycle_time in CycleTimes.items():
+        with machine.request() as req:
+            yield req
+            yield env.timeout(cycle_time)
+
+            if random.random() < DefectRates[step]:
+                output_tracker['defects'] += 1
+                return
+            
+    output_tracker['produced'] += 1
