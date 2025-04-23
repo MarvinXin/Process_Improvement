@@ -35,7 +35,6 @@ DefectRates = {
 
 # Processing Units functions
 def process_units(env, unit_id, machine, output_tracker):
-    global total_defects, total_production
 
     for step, cycle_time in CycleTimes.items():
         with machine.request() as req:
@@ -47,3 +46,13 @@ def process_units(env, unit_id, machine, output_tracker):
                 return
             
     output_tracker['produced'] += 1
+
+# Machine Breaking functions
+def machine_break(env, machine):
+    while True:
+        yield env.timeout(random.expovariate(break_mean))
+        with machine.request() as req:
+            yield req
+            print(f"[{env.now:.2f}] Machine broke down!")
+            yield req
+            print(f"[{env.now:.2f}] Machine repaired.")
