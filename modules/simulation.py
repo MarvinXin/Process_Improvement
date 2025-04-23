@@ -48,7 +48,7 @@ def process_units(env, unit_id, machine, output_tracker):
     output_tracker['produced'] += 1
 
 # Machine Breaking functions
-def machine_break(env, machine):
+def machine_breakdown(env, machine):
     while True:
         yield env.timeout(random.expovariate(break_mean))
         with machine.request() as req:
@@ -56,3 +56,32 @@ def machine_break(env, machine):
             print(f"[{env.now:.2f}] Machine broke down!")
             yield req
             print(f"[{env.now:.2f}] Machine repaired.")
+
+
+# Run the simulation function
+def run_simulation():
+    env = simpy.Environment()
+    machine = simpy.Resource(env, capacity=num_of_Machines)
+    output_tracker = {
+        'defect': 0,
+        'produced': 0
+    }
+
+    #Start Machine_Breakdown process if any
+    env.process(machine_breakdown(env, machine))
+
+
+    #Simulate the continuous production
+    item_id = 0
+    def generate_units(env):
+        nonlocal item_id
+        while env.now < shift:
+            env.process(process_units(env, item_id, machine, output_tracker))
+            yield env.timeout(0.2)
+            item_id += 1
+
+    #Running (calling) the simulation
+    env.process(generate_units)
+    env.run(until=shift)
+    
+    return output_tracker
