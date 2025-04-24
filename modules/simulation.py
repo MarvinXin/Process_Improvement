@@ -6,13 +6,13 @@ import simpy
 
 #Shift Parameters
 workers = 8 # Number of workers
-shift = 8 * 60 # 8 hours of work (in minutes)
+shift = workers * 60 # 8 hours of work per workers (in minutes)
 
 #Machine Parameter
 num_of_Machines = 4 #Number of machines
 mean_time_to_make = 3000 # Mean Time to Failure (minutes)
 repair_time = 240 # Repair Time (minutes)
-break_mean = 1 / mean_time_to_make # How often the machines break respect to the mean_time_to_make
+break_mean = 1 / 2 # How often the machines break respect to the mean_time_to_make
 demands = 5000 #Quantity Quota for each day
 
 #Process cycle times (in minutes per unit)
