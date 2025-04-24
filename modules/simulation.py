@@ -54,7 +54,7 @@ def machine_breakdown(env, machine):
         with machine.request() as req:
             yield req
             print(f"[{env.now:.2f}] Machine broke down!")
-            yield req
+            yield env.timeout(repair_time)
             print(f"[{env.now:.2f}] Machine repaired.")
 
 
@@ -63,7 +63,7 @@ def run_simulation():
     env = simpy.Environment()
     machine = simpy.Resource(env, capacity=num_of_Machines)
     output_tracker = {
-        'defect': 0,
+        'defects': 0,
         'produced': 0
     }
 
@@ -80,8 +80,14 @@ def run_simulation():
             yield env.timeout(0.2)
             item_id += 1
 
-    #Running (calling) the simulation
-    env.process(generate_units)
+    env.process(generate_units(env))
     env.run(until=shift)
     
     return output_tracker
+
+# Run the simulation
+if __name__ == "__main__":
+    results = run_simulation()
+    print("\n=== Simulation Results ===")
+    print(f"Produced units: {results['produced']}")
+    print(f"Defective units: {results['defects']}")
