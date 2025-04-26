@@ -6,12 +6,12 @@ import simpy
 random.seed(42)
 
 #Shift Parameters
-workers = 5  #Number of workers
+workers = 10  #Number of workers
 hours = 8
 shift = hours * 60 # 12 hours of work (in minutes)
 
 #Machine Parameter
-num_of_Machines = 5 #Number of machines
+num_of_Machines = 10 #Number of machines
 mean_time_to_make = 200 # Mean Time to Failure (minutes)
 repair_time = 240 # Repair Time (minutes)
 break_mean = 1 / mean_time_to_make # How often the machines break respect to the mean_time_to_make
@@ -27,10 +27,10 @@ CycleTimes = {
 
 #Process defect rates
 DefectRates = {
-    "Filling": 0, #% of Defect at filling station
-    "Capping": 0, #% of Capping at filling station
-    "Labeling": 0, #% of Labeling at filling station
-    "Packaging": 0 #% of Packaging at filling station
+    "Filling": 0.02, #% of Defect at filling station
+    "Capping": 0.01, #% of Capping at filling station
+    "Labeling": 0.04, #% of Labeling at filling station
+    "Packaging": 0.03 #% of Packaging at filling station
 }
 
 
@@ -89,11 +89,17 @@ def run_simulation():
     return output_tracker
 
 
-def production_loop(env, id, machines_resource, workers_resource, output_tracker):
+def production_loop(env, id, machines_resource, workers_resource, output_tracker, spawn_intervals=0.1, max_unit = None):
+    units_created = 0
     while env.now < shift:
+        if max_unit is not None and units_created >= max_unit:
+            break
+
         env.process(process_units(env, id, machines_resource, workers_resource, output_tracker))
-        yield env.timeout(0.1)
+        yield env.timeout(spawn_intervals)
+
         id += 1
+        units_created += 1
 
     
 
