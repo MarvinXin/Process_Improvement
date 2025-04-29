@@ -71,17 +71,18 @@ def run_simulation():
     machines_resources = [simpy.Resource(env, capacity=1) for _ in range(num_of_Machines)]  # Correct
 
 
-    output_tracker = {
+    output_tracker = [{
         'defects': 0,
         'produced': 0
     }
+    for _ in range (num_of_Machines)]
 
     # Start machine breakdown logic (MTBF/MTTR simulation)
     for machine in machines_resources:
         env.process(machine_breakdown(env, machine))  # Correct, runs for each individual machine
 
     for i in range(min(workers, num_of_Machines)):
-        env.process(production_loop(env, i, machines_resources[i], workers_resources[i], output_tracker))
+        env.process(production_loop(env, i, machines_resources[i], workers_resources[i], output_tracker[i]))
          
     #Run the simulation
     env.run(until=shift)
@@ -107,9 +108,19 @@ def production_loop(env, id, machines_resource, workers_resource, output_tracker
 if __name__ == "__main__":
     results = run_simulation()
     print("\n=== Simulation Results ===")
-    print(f"Produced units: {results['produced']}")
-    print(f"Defective units: {results['defects']}")
-    total = results['produced'] + results['defects']
-    yield_rate = results['produced'] / total if total else 0
 
-    print(f"Yield Rate: {yield_rate:.2%}")
+    total_produced = total_defects = 0
+
+    for i, r in enumerate(results):
+        total = r['produced'] + r['defects']
+        yield_rate = r['produced'] / total if total else 0
+        print(f"Machine {i}: Produced: {r['produced']}, Defective: {r['defects']}, Yield: {yield_rate:.2%}")
+        total_produced += r['produced']
+        total_defects += r['defects']
+
+    total = total_produced + total_defects
+    overall_yield = total_produced / total if total else 0
+    print("\n=== Overall Totals ===")
+    print(f"Produced units: {total_produced}")
+    print(f"Defective units: {total_defects}")
+    print(f"Overall Yield Rate: {overall_yield:.2%}")
