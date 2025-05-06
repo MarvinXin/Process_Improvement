@@ -6,16 +6,17 @@ import simpy
 random.seed(42)
 
 #Shift Parameters
-workers = 10  #Number of workers
+workers = 5  #Number of workers
 hours = 8
 shift = hours * 60 # 12 hours of work (in minutes)
 
 #Machine Parameter
-num_of_Machines = 10 #Number of machines
+num_of_Machines = 5 #Number of machines
 mean_time_to_make = 200 # Mean Time to Failure (minutes)
 repair_time = 240 # Repair Time (minutes)
 break_mean = 1 / mean_time_to_make # How often the machines break respect to the mean_time_to_make
-demands = 5000 #Quantity Quota for each day
+demands = 5000 # Quantity Quota for each day
+event_log = [] # Event list to used to the spc_analysis
 
 #Process cycle times (in minutes per unit)
 CycleTimes = {
@@ -40,12 +41,26 @@ def process_units(env, unit_id, machine, worker, output_tracker):
     for step, cycle_time in CycleTimes.items():
         with machine.request() as m_req, worker.request() as w_req:
             yield m_req & w_req
-            #print(f"[{env.now:.2f}] Unit {unit_id} starting {step} with cycle time {cycle_time}.")
+            print(f"[{env.now:.2f}] Unit {unit_id} starting {step} with cycle time {cycle_time}.")
             yield env.timeout(cycle_time)
+            
+            #Determine if the product is defected
+            defected = random.random() < DefectRates[step]
+            
+            
+            #Logging events into event_list
+            event_log.append({
+                'unit_id': unit_id,
+                'step': step,
+                'time_step': env.now,
+                'defected': defected
+            })
 
-            if random.random() < DefectRates[step]:
+            #Checks to see if the item is defected
+            if defected:
                 output_tracker['defects'] += 1
-                #print(f"[{env.now:.2f}] Unit {unit_id} defected at {step}.")
+                print(f"[{env.now:.2f}] Unit {unit_id} defected at {step}.")
+
                 return
             
     output_tracker['produced'] += 1
@@ -114,13 +129,14 @@ if __name__ == "__main__":
     for i, r in enumerate(results):
         total = r['produced'] + r['defects']
         yield_rate = r['produced'] / total if total else 0
-        print(f"Machine {i}: Produced: {r['produced']}, Defective: {r['defects']}, Yield: {yield_rate:.2%}")
+        print(f"Machine {i+1}: Produced: {r['produced']}, Defective: {r['defects']}, Yield: {yield_rate:.2%}")
         total_produced += r['produced']
         total_defects += r['defects']
 
     total = total_produced + total_defects
     overall_yield = total_produced / total if total else 0
-    print("\n=== Overall Totals ===")
+    '''print("\n=== Overall Totals ===")
     print(f"Produced units: {total_produced}")
     print(f"Defective units: {total_defects}")
-    print(f"Overall Yield Rate: {overall_yield:.2%}")
+    print(f"Overall Yield Rate: {overall_yield:.2%}")'''
+    print(event_log)
