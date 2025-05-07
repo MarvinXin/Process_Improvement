@@ -6,12 +6,12 @@ import simpy
 random.seed(42)
 
 #Shift Parameters
-workers = 5  #Number of workers
+workers = 2  #Number of workers
 hours = 8
 shift = hours * 60 # 12 hours of work (in minutes)
 
 #Machine Parameter
-num_of_Machines = 5 #Number of machines
+num_of_Machines = 2 #Number of machines
 mean_time_to_make = 200 # Mean Time to Failure (minutes)
 repair_time = 240 # Repair Time (minutes)
 break_mean = 1 / mean_time_to_make # How often the machines break respect to the mean_time_to_make
@@ -41,7 +41,7 @@ def process_units(env, unit_id, machine, worker, output_tracker):
     for step, cycle_time in CycleTimes.items():
         with machine.request() as m_req, worker.request() as w_req:
             yield m_req & w_req
-            print(f"[{env.now:.2f}] Unit {unit_id} starting {step} with cycle time {cycle_time}.")
+            #print(f"[{env.now:.2f}] Unit {unit_id} starting {step} with cycle time {cycle_time}.")
             yield env.timeout(cycle_time)
             
             #Determine if the product is defected
@@ -59,7 +59,7 @@ def process_units(env, unit_id, machine, worker, output_tracker):
             #Checks to see if the item is defected
             if defected:
                 output_tracker['defects'] += 1
-                print(f"[{env.now:.2f}] Unit {unit_id} defected at {step}.")
+                #print(f"[{env.now:.2f}] Unit {unit_id} defected at {step}.")
 
                 return
             
@@ -139,3 +139,4 @@ if __name__ == "__main__":
     print(f"Produced units: {total_produced}")
     print(f"Defective units: {total_defects}")
     print(f"Overall Yield Rate: {overall_yield:.2%}")
+    print(event_log)
