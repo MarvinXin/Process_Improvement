@@ -135,8 +135,7 @@ if __name__ == "__main__":
 
     total = total_produced + total_defects
     overall_yield = total_produced / total if total else 0
-    '''print("\n=== Overall Totals ===")
+    print("\n=== Overall Totals ===")
     print(f"Produced units: {total_produced}")
     print(f"Defective units: {total_defects}")
-    print(f"Overall Yield Rate: {overall_yield:.2%}")'''
-    print(event_log)
+    print(f"Overall Yield Rate: {overall_yield:.2%}")
