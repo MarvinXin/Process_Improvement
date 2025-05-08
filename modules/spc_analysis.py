@@ -2,10 +2,7 @@
 #Test Data
 sim_data = [
     {'unit_id': 1001, 'step': 'Filling', 'time_step': 120.5, 'defected': False},
-    {'unit_id': 1002, 'step': 'Capping', 'time_step': 122.3, 'defected': False},
     {'unit_id': 1001, 'step': 'Capping', 'time_step': 130.7, 'defected': False},
-    {'unit_id': 1003, 'step': 'Labeling', 'time_step': 140.0, 'defected': True},
-    {'unit_id': 1002, 'step': 'Labeling', 'time_step': 145.2, 'defected': False},
     {'unit_id': 1001, 'step': 'Packaging', 'time_step': 150.0, 'defected': False},
 ]
 
@@ -44,8 +41,15 @@ def group_by_unit(sim_data):
 def is_unit_complete(sim_data):
     pass
 
+#Function that gets the time for the last step in the product cycle
 def get_end_time(sim_data):
-    pass
+    end_times = {}
+    final_step = 'Packaging'
+    for event in sim_data:
+        id = event['unit_id']
+        if event['step'] == final_step:
+            end_times[id] = event['time_step']
+    return end_times
 
 # Function that checks if a product is defective
 def check_if_defective(sim_data):
@@ -53,4 +57,5 @@ def check_if_defective(sim_data):
         if event['defected']:
             return True
 
-print(group_by_unit(sim_data))
+#print(group_by_unit(sim_data))
+print(get_end_time(sim_data))
