@@ -33,7 +33,6 @@ def parse_simulation_data(sim_data):
             good_units.append(record)
         else:
             bad_units.append(record)
-
     return good_units, bad_units
 
 # Function that is grouping and sorting raw data by organizing them in appropriate dictionary
@@ -57,20 +56,14 @@ def is_unit_complete(sim_data):
 
 #Function that gets the time for the last step in the product cycle
 def get_end_time(sim_data):
-    end_times = {}
-    final_step = 'Packaging'
-    for event in sim_data:
-        id = event['unit_id']
-        if event['step'] == final_step:
-            end_times[id] = event['time_step']
-    return end_times
+   return max(event['time_step'] for event in sim_data)
 
 # Function that checks if a product is defective
 def check_if_defective(sim_data):
     for event in sim_data:
         if event['defected']:
             return True
-
+    return False
 
 result = parse_simulation_data(sim_data)
 print(result)

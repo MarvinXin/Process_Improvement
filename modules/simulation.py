@@ -3,12 +3,13 @@
 import random
 import simpy
 
+
 random.seed(42)
 
 #Shift Parameters
 workers = 2  #Number of workers
-hours = 8
-shift = hours * 60 # 12 hours of work (in minutes)
+
+shift = 480 # 12 hours of work (in minutes)
 
 #Machine Parameter
 num_of_Machines = 2 #Number of machines
@@ -86,11 +87,7 @@ def run_simulation():
     machines_resources = [simpy.Resource(env, capacity=1) for _ in range(num_of_Machines)]  # Correct
 
 
-    output_tracker = [{
-        'defects': 0,
-        'produced': 0
-    }
-    for _ in range (num_of_Machines)]
+    output_tracker = [{'defects': 0, 'produced': 0} for _ in range (num_of_Machines)]
 
     # Start machine breakdown logic (MTBF/MTTR simulation)
     for machine in machines_resources:
@@ -100,18 +97,22 @@ def run_simulation():
         env.process(production_loop(env, i, machines_resources[i], workers_resources[i], output_tracker[i]))
          
     #Run the simulation
+    print(f"Running simulation for {shift} minutes...")
     env.run(until=shift)
     
-    return output_tracker
+    return output_tracker, event_log
 
 
-def production_loop(env, id, machines_resource, workers_resource, output_tracker, spawn_intervals=0.1, max_unit = None):
+def production_loop(env, id, machines_resource, workers_resource, output_tracker, spawn_intervals=1, max_unit = None):
     units_created = 0
     while env.now < shift:
         if max_unit is not None and units_created >= max_unit:
             break
-
+        
+        #Creating a new unit process
         env.process(process_units(env, id, machines_resource, workers_resource, output_tracker))
+
+        #Wait a certain amount of time before starting again
         yield env.timeout(spawn_intervals)
 
         id += 1
@@ -121,8 +122,10 @@ def production_loop(env, id, machines_resource, workers_resource, output_tracker
 
 # Run the simulation
 if __name__ == "__main__":
+
     results = run_simulation()
-    print("\n=== Simulation Results ===")
+
+'''    print("\n=== Simulation Results ===")
 
     total_produced = total_defects = 0
 
@@ -138,5 +141,6 @@ if __name__ == "__main__":
     print("\n=== Overall Totals ===")
     print(f"Produced units: {total_produced}")
     print(f"Defective units: {total_defects}")
-    print(f"Overall Yield Rate: {overall_yield:.2%}")
-    print(event_log)
+    print(f"Overall Yield Rate: {overall_yield:.2%}")'''
+
+
