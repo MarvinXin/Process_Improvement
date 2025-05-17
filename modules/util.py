@@ -97,5 +97,3 @@ def check_if_defective(sim_data):
     return False
 
 
-results = get_process_time(sim_data)
-print(results)
