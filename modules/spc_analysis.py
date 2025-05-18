@@ -36,7 +36,7 @@ def calculate_mean_process_time(sim_data):
     
 
 def calculate_expected_process_time(cycle_times):
-    return sum(cycle_times.values())
+    return sum(value * 60 for value in cycle_times.values())
 
 def mean(cycle_time):
     total_time = sum(cycle_time.values())

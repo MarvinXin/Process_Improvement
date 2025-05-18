@@ -1,8 +1,13 @@
 # Main Dashboard
 from modules import run_simulation, parse_simulation_data, calculate_expected_process_time, calculate_mean_process_time, calculate_ucl_lcl
 
+output, data = run_simulation()
+good_units, bad_units, unfinished = parse_simulation_data(data)
+#print(good_units)
+print(good_units)
 
-# --- Sample Input Data ---
+'''
+# --- Sample Input Data --
 CycleTimes = {
     "Filling": 10 / 60,
     "Capping": 5 / 60,
@@ -29,5 +34,5 @@ ucl, lcl = calculate_ucl_lcl(sim_data)
 print(f"Actual Mean Process Time: {actual_mean:.2f} minutes ")
 print(f"Expected Mean Process Time: {expected_mean:.2f} minutes")
 print(f"UCL:, {ucl:.2f} minutes")
-print(f"LCL:, {lcl:.2f} minutes")
+print(f"LCL:, {lcl:.2f} minutes")'''
 
