@@ -43,4 +43,11 @@ def mean(cycle_time):
     mean_time = total_time / len(cycle_time)
     return mean_time
 
+def subgrouping(data, subgroup_size=5):
+    subgroups = []
+    for i in range(0, len(data), subgroup_size):
+        subgroup = data[i:i + subgroup_size]
+        subgroups.append(subgroup)
+    return subgroups
+
 
