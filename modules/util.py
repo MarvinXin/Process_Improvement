@@ -40,10 +40,12 @@ def parse_simulation_data(sim_data):
         process_time = get_process_time(events)
         is_defective = check_if_defective(events)
         is_complete = is_unit_complete(events)
+        end_time_step = get_completion_time(events)
 
         record = {
             'unit_id': unit_id,
             'process_time': process_time,
+            'completion_time': end_time_step,
             'is_defective': is_defective
         }
 
@@ -99,5 +101,13 @@ def check_if_defective(sim_data):
     return False
 
 
+def get_completion_time(events):
+    for event in events:
+        if event['step'] == 'Packaging':
+            return event['time_step']
+    return None
 
 print(parse_simulation_data(sample_data))
+
+def weighted_mean(events):
+    pass
