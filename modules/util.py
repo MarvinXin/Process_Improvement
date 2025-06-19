@@ -44,8 +44,8 @@ def parse_simulation_data(sim_data):
 
         record = {
             'unit_id': unit_id,
-            'process_time': process_time,
-            'completion_time': end_time_step,
+            'process_time': round(process_time, 2) if process_time is not None else None,
+            'completion_time': round(end_time_step, 2) if end_time_step is not None else None,
             'is_defective': is_defective
         }
 
@@ -78,19 +78,23 @@ def is_unit_complete(sim_data):
     return required_steps.issubset(steps_done)
 
 
-#Function that gets the time for the last step in the product cycle
 def get_process_time(sim_data):
     start = end = None
     for event in sim_data:
-        if event['step'] == 'Filling' and start is None:
+        if not isinstance(event, dict):
+            print("Bad event:", event)
+            continue  # Skip this bad input
+        
+        if event.get('step') == 'Filling' and start is None:
             start = event['time_step']
-        elif event['step'] == 'Packaging':
+        elif event.get('step') == 'Packaging':
             end = event['time_step']
     
     if start is not None and end is not None:
         return end - start
     else:
         return None
+
 
 
 # Function that checks if a product is defective

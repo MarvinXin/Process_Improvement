@@ -5,16 +5,21 @@ import numpy as np
 #perform basic Statstical process control
 
 
-def calculate_ucl_lcl(sim_data):
-    process_times = list(get_process_time(sim_data).values())  # Extract numeric values
-    if not process_times:
-        return 0, 0  # Handle edge case
+import numpy as np
 
-    mean_time = sum(process_times) / len(process_times)
-    std_dev = np.std(process_times)
-    ucl = mean_time + 3 * std_dev
-    lcl = mean_time - 3 * std_dev
-    return ucl, lcl
+import numpy as np
+
+def calculate_ucl_lcl(values):
+    if not values:
+        return 0, 0, 0  # Nothing to calculate
+
+    mean = np.mean(values)
+    std_dev = np.std(values)
+    ucl = mean + 3 * std_dev
+    lcl = mean - 3 * std_dev
+    return ucl, lcl, mean
+
+
 
 
 def p_chart():
@@ -36,7 +41,7 @@ def calculate_mean_process_time(sim_data):
     
 
 def calculate_expected_process_time(cycle_times):
-    return sum(value * 60 for value in cycle_times.values())
+    return sum(cycle_times.values())
 
 def mean(cycle_time):
     total_time = sum(cycle_time.values())
@@ -51,3 +56,4 @@ def subgrouping(data, subgroup_size=5):
     return subgroups
 
 
+print(calculate_expected_process_time)

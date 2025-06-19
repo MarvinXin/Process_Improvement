@@ -7,14 +7,14 @@ import simpy
 random.seed(42)
 
 #Shift Parameters
-workers = 2  #Number of workers
+workers = 3  #Number of workers
 
 shift = 480 # 12 hours of work (in minutes)
 
 #Machine Parameter
-num_of_Machines = 2 #Number of machines
+num_of_Machines = 3 #Number of machines
 mean_time_to_make = 200 # Mean Time to Failure (minutes)
-repair_time = 240 # Repair Time (minutes)
+repair_time = 120 # Repair Time (minutes)
 break_mean = 1 / mean_time_to_make # How often the machines break respect to the mean_time_to_make
 demands = 5000 # Quantity Quota for each day
 event_log = [] # Event list to used to the spc_analysis
@@ -47,6 +47,8 @@ def process_units(env, unit_id, machine, worker, output_tracker):
             
             #Determine if the product is defected
             defected = random.random() < DefectRates[step]
+
+            
             
             
             #Logging events into event_list
