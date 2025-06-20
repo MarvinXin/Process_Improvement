@@ -1,6 +1,5 @@
 #Visual graphics (matlib, seaborn, plotly)
 from modules.spc_analysis import calculate_ucl_lcl
-from modules.util import group_by_unit
 import plotly.express as px
 import streamlit as st
 
@@ -24,7 +23,7 @@ def plot_spc_time_line(df, chart_key="SPC_time_chart"):
     df_sorted = df.sort_values("unit_id").reset_index(drop=True)
     
     # Assign each 5-unit chunk to a subgroup
-    df_sorted["subgroup"] = (df_sorted.index // 5) + 1
+    df_sorted["subgroup"] = (df_sorted.index // 15) + 1
 
     # Compute mean process time for each subgroup
     subgroup_means = df_sorted.groupby("subgroup")["process_time"].mean().reset_index()
